@@ -1,8 +1,8 @@
 import {gitApi} from "../api";
-import {QueryFunctionContext, useQuery} from "@tanstack/react-query";
+import {useQuery} from "@tanstack/react-query";
 
 
-const fetchUserInfo = async (ctx: QueryFunctionContext) => {
+const fetchUserInfo = async () => {
     const {data} = await gitApi.get('/user');
     return data;
 }

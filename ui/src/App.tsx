@@ -5,7 +5,7 @@ import {useUserInfo} from "./hooks";
 
 
 export const Left= (): React.JSX.Element => {
-    const {token, addToken, addBaseUrl} = useGitDetails();
+    const {addToken, addBaseUrl} = useGitDetails();
 
     const addTokenHandler = (event: React.MouseEvent<HTMLButtonElement>) => {
         event.preventDefault();
