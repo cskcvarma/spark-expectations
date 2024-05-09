@@ -5,7 +5,7 @@ interface AuthState {
   token: string | null;
   isModalOpen: boolean;
   username: string | null;
-  setToken: (token: string) => void;
+  setToken: (token: string | null) => void;
   setUserName: (username: string) => void;
   openModal: () => void;
   closeModal: () => void;
@@ -25,7 +25,7 @@ export const useAuthStore = create(
       token: null,
       isModalOpen: false,
       username: null,
-      setToken: (token: string) => set(() => ({ token })),
+      setToken: (token: string | null) => set(() => ({ token })),
       setUserName: (username: string) => set(() => ({ username })),
       openModal: () => set(() => ({ isModalOpen: true })),
       closeModal: () => set(() => ({ isModalOpen: false })),

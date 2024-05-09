@@ -15,10 +15,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const form = useForm({
     initialValues: {
-      token: '',
+      token,
     },
     validate: {
-      token: (value: string) => value.length === 0 && 'Token is required',
+      token: (value: string | null) => value && value.length === 0 && 'Token is required',
     },
   });
 
@@ -30,14 +30,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   }, [token, openModal, closeModal]);
 
-  const handleLogin = (values: { token: string }) => {
-    setToken(values.token);
+  const handleLogin = (values: { token: null | string }) => {
+    setToken(values?.token);
 
     getUserFn().then((res) => {
       setUserName(res.login);
     });
 
     closeModal();
+  };
+
+  const handleCancel = () => {
+    if (token) closeModal();
   };
 
   return (
@@ -47,14 +51,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         onClose={closeModal}
         title="Enter Your Token"
         closeOnClickOutside={false}
+        withCloseButton={false}
       >
         <form onSubmit={form.onSubmit((values) => handleLogin(values))}>
           <TextInput {...form.getInputProps('token')} label="Token" placeholder="Token" required />
           <Group mt="md">
+            <Button type="button" onClick={handleCancel} color="red">
+              Cancel
+            </Button>
             <Button type="submit">Submit</Button>
           </Group>
         </form>
       </Modal>
+      {/*TODO: Handle Error State*/}
       {token && username ? children : <Loading />}
     </>
   );
