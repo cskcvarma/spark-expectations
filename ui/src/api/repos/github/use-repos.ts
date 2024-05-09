@@ -6,7 +6,7 @@ import { repoQueryKeys } from '../repo-query-keys';
 export const getReposFn = async () => {
   const { username } = useAuthStore.getState();
 
-  const response = await apiClient.get(`/users/${username? username: ''}/repos`);
+  const response = await apiClient.get(`/users/${username || ''}/repos`);
 
   return response.data as Repos[];
 };

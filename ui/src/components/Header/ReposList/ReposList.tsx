@@ -14,7 +14,6 @@ import {
 import { useState } from 'react';
 import { useRepos } from '@/api';
 
-
 export const ReposList = () => {
   const combobox = useCombobox({
     scrollBehavior: 'smooth',

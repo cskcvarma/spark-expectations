@@ -1,4 +1,4 @@
-import { Avatar, Group, Text, UnstyledButton, rem, Skeleton, Alert } from '@mantine/core';
+import { Avatar, Group, Text, UnstyledButton, Skeleton, Alert } from '@mantine/core';
 import { IconAlertCircle, IconChevronRight } from '@tabler/icons-react';
 import './UserButton.css';
 import { useUser } from '@/api';

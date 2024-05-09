@@ -1,6 +1,6 @@
-import { AppShell, Button, Group, Skeleton } from '@mantine/core';
+import { AppShell } from '@mantine/core';
 import React from 'react';
-import { useAuthStore } from '@/store';
+
 import { Header } from '@/components';
 
 export const AppLayout = () => (

@@ -3,14 +3,15 @@ import { Modal, TextInput, Button, Group } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useAuthStore } from '@/store';
 import { getUserFn } from '@/api';
-import {Loading} from "@/components/Loading/Loading";
+import { Loading } from '@/components/Loading/Loading';
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { token,username, isModalOpen, setUserName, setToken, openModal, closeModal } = useAuthStore();
+  const { token, username, isModalOpen, setUserName, setToken, openModal, closeModal } =
+    useAuthStore();
 
   const form = useForm({
     initialValues: {
@@ -54,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           </Group>
         </form>
       </Modal>
-      {token && username? children : <Loading />}
+      {token && username ? children : <Loading />}
     </>
   );
 };
