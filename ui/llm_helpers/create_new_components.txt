@@ -1,31 +1,22 @@
 To generate a template for creating new component files in a React application, considering the structure and patterns observed in ui/src/App.tsx, src/layouts/AppLayout.tsx, providers/auth-provider/auth-provider.tsx, and store/auth-store/auth-store.ts, follow these detailed instructions. This template will help maintain consistency and ensure that new components integrate smoothly with the existing application architecture.
 Template Instructions for New React Component
-1. Setup File and Import Dependencies
-Start by creating a new TypeScript file in the appropriate directory (e.g., src/components/YourNewComponent.tsx).
-Import React and any necessary hooks (useState, useEffect).
-Import any required context providers, custom hooks from the store, or utility functions.
-Optionally, import CSS or other styling files.
+
+1. Component Function
+Define the functional component using the FC type from React, incorporating props if necessary.
+Utilize state management and context providers as needed within the component.
 
 import React, { FC, useState, useEffect } from 'react';
 import { useYourCustomHook } from '@/store';  // Adjust based on your store structure
 import { YourContextProvider } from '@/providers';  // If context is needed
-import './YourNewComponent.css';  // If specific styles are needed
+import './YourNew.css';  // If specific styles are needed
 
 
-2. Define Component Props
-Define an interface for the component's props if it needs to receive any props.
-
-interface YourNewComponentProps {
+interface YourNewProps {
   // Define properties here
   exampleProp: string;
 }
 
-
-3. Component Function
-Define the functional component using the FC type from React, incorporating props if necessary.
-Utilize state management and context providers as needed within the component.
-
-export const YourNewComponent: FC<YourNewComponentProps> = ({ exampleProp }) => {
+export const YourNew: FC<YourNewProps> = ({ exampleProp }) => {
   const { stateValue, methodFromStore } = useYourCustomHook();  // Using custom store hook
 
   // Local state example
@@ -47,16 +38,45 @@ export const YourNewComponent: FC<YourNewComponentProps> = ({ exampleProp }) => 
   );
 };
 
-4. Writing Unit Tests
-Create a test file (e.g., YourNewComponent.test.tsx) and use testing libraries like Vitest, React Testing Library.
+
+2. Write a CSS file at YourNewComponent.css
+
+.example {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: #3498db;
+  animation: spin 1s infinite linear;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+
+3. Writing Unit Tests
+Create a test file (e.g., YourNew.test.tsx) and use testing libraries like Vitest, React Testing Library.
 
 import { describe, it, expect, vi } from 'vitest';
 import { render, screen } from '@test-utils';
-import { YourNewComponent } from './YourNewComponent';
+import { YourNew } from './YourNew';
 
-describe('YourNewComponent', () => {
+describe('YourNew', () => {
   it('renders correctly with props', () => {
-    render(<YourNewComponent exampleProp="Test Prop" />);
+    render(<YourNew exampleProp="Test Prop" />);
     expect(screen.getByText('Test Prop')).toBeInTheDocument();
   });
 
@@ -75,7 +95,9 @@ describe('YourNewComponent', () => {
 });
 
 
-5. Additional Considerations
+
+
+4. Additional Considerations
 Ensure proper integration and cleanup in tests, such as unsubscribing from stores or removing listeners. Consider adding PropTypes or TypeScript types for additional type safety and documentation.
 Usage
 When you need to create a new component, copy this template into the new component file. Adjust imports, props, state management, JSX, and tests according to the specific needs of the component. Ensure that the component's functionality and styling are tested within the context of the application.

@@ -4,11 +4,7 @@ import { apiClient } from '@/api';
 import { userQueryKeys } from '../user-query-keys';
 
 export const getUserFn = async () => {
-  const response = await apiClient.get('/user', {
-    headers: {
-      Authorization: `Bearer ${useAuthStore.getState().token}`,
-    },
-  });
+  const response = await apiClient.get('/user');
 
   return response.data as User;
 };

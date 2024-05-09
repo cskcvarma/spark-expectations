@@ -3,13 +3,10 @@ import { useAuthStore } from '@/store';
 import { apiClient } from '@/api';
 import { repoQueryKeys } from '../repo-query-keys';
 
-// TODO: Optimize this function
 export const getReposFn = async () => {
-  const response = await apiClient.get(`/users/${useAuthStore.getState().username}/repos`, {
-    headers: {
-      Authorization: `Bearer ${useAuthStore.getState().token}`,
-    },
-  });
+  const { username } = useAuthStore.getState();
+
+  const response = await apiClient.get(`/users/${username? username: ''}/repos`);
 
   return response.data as Repos[];
 };

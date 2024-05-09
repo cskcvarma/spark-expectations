@@ -2,20 +2,8 @@ import { Avatar, Group, Text, UnstyledButton, rem, Skeleton, Alert } from '@mant
 import { IconAlertCircle, IconChevronRight } from '@tabler/icons-react';
 import './UserButton.css';
 import { useUser } from '@/api';
-import { useAuthStore } from '@/store';
 
-// TODO: Handle Token Check in a different place
 export const UserButton = () => {
-  const { token } = useAuthStore();
-
-  if (!token) {
-    return <LoadingUserButton />;
-  }
-
-  return <UserButtonWithToken />;
-};
-
-const UserButtonWithToken = () => {
   const { data, error, isLoading } = useUser();
 
   if (isLoading) {

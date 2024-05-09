@@ -3,15 +3,14 @@ import { Modal, TextInput, Button, Group } from '@mantine/core';
 import { useForm } from '@mantine/form';
 import { useAuthStore } from '@/store';
 import { getUserFn } from '@/api';
+import {Loading} from "@/components/Loading/Loading";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
-// TODO: Handle app state when token is not present. Need to think about this
-
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
-  const { token, isModalOpen, setUserName, setToken, openModal, closeModal } = useAuthStore();
+  const { token,username, isModalOpen, setUserName, setToken, openModal, closeModal } = useAuthStore();
 
   const form = useForm({
     initialValues: {
@@ -55,7 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           </Group>
         </form>
       </Modal>
-      {children}
+      {token && username? children : <Loading />}
     </>
   );
 };

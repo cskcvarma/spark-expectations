@@ -12,20 +12,10 @@ import {
   useCombobox,
 } from '@mantine/core';
 import { useState } from 'react';
-import { useAuthStore } from '@/store';
 import { useRepos } from '@/api';
 
+
 export const ReposList = () => {
-  const { username } = useAuthStore();
-
-  if (!username) {
-    return <LoadingSkeleton />;
-  }
-
-  return <ReposListWithUserName />;
-};
-
-const ReposListWithUserName = () => {
   const combobox = useCombobox({
     scrollBehavior: 'smooth',
     onDropdownClose: () => combobox.resetSelectedOption(),
@@ -35,7 +25,7 @@ const ReposListWithUserName = () => {
 
   const [value, setValue] = useState<string>('');
 
-  if (error || !data) {
+  if (error) {
     return <ErrorComponent />;
   }
 
@@ -43,12 +33,12 @@ const ReposListWithUserName = () => {
     return <LoadingSkeleton />;
   }
 
-  const shouldFilterOptions = !data.some((item) => item.name === value);
+  const shouldFilterOptions = !data?.some((item) => item.name === value);
   const filteredOptions = shouldFilterOptions
-    ? data.filter((item) => item.name.toLowerCase().includes(value.toLowerCase().trim()))
+    ? data?.filter((item) => item.name.toLowerCase().includes(value.toLowerCase().trim()))
     : data;
 
-  const options = filteredOptions.map((item: any) => (
+  const options = filteredOptions?.map((item: any) => (
     <ComboboxOption value={item.name} key={item.name}>
       {item.name}
     </ComboboxOption>
@@ -82,7 +72,7 @@ const ReposListWithUserName = () => {
       <ComboboxDropdown>
         <ComboboxOptions>
           <ScrollAreaAutosize mah={200} type="scroll">
-            {options.length === 0 ? <ComboboxEmpty>Nothing Found</ComboboxEmpty> : options}
+            {options?.length === 0 ? <ComboboxEmpty>Nothing Found</ComboboxEmpty> : options}
           </ScrollAreaAutosize>
         </ComboboxOptions>
       </ComboboxDropdown>
