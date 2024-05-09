@@ -55,7 +55,7 @@ export const ReposList = () => {
     >
       <ComboboxTarget>
         <TextInput
-          placeholder="pick a grocery or type anything"
+          placeholder="pick a repo or type anything"
           value={value}
           onChange={(e) => {
             setValue(e.currentTarget.value);
@@ -80,7 +80,7 @@ export const ReposList = () => {
 };
 
 const LoadingSkeleton = () => (
-  <div style={{ padding: '10px' }}>
+  <div style={{ padding: '10px' }} data-testid="loading-user-menu">
     <Skeleton height={20} radius="xl" animate />
     <Skeleton height={20} radius="xl" animate style={{ marginTop: '10px' }} />
     <Skeleton height={20} radius="xl" animate style={{ marginTop: '10px' }} />

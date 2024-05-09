@@ -8,8 +8,7 @@ import { useAuthStore } from '@/store';
 export const UserMenu = () => {
   const { data, error, isLoading } = useUser();
   const [userMenuOpened, setUserMenuOpened] = useState(false);
-  const { openModal, token } = useAuthStore((state) => ({
-    token: state.token,
+  const { openModal } = useAuthStore((state) => ({
     openModal: state.openModal,
   }));
 
@@ -70,7 +69,7 @@ const LoadingUserButton = () => (
   <UnstyledButton>
     <Group>
       <Skeleton circle width={40} height={40} />
-      <div style={{ flex: 1 }}>
+      <div style={{ flex: 1 }} data-testid="loading-user-menu">
         <Skeleton height={8} width="50%" mb="xs" />
         <Skeleton height={8} width="30%" />
       </div>
