@@ -1,88 +1,43 @@
-// src/theme.ts
-import { MantineThemeOverride } from '@mantine/core';
+import { createTheme, rem } from '@mantine/core';
 
-const sharedTheme: MantineThemeOverride = {
-  fontFamily: 'Arial, sans-serif',
+export const theme = createTheme({
+  colors: {
+    deepBlue: [
+      '#eef3ff',
+      '#dce4f5',
+      '#b9c7e2',
+      '#94a8d0',
+      '#748dc1',
+      '#5f7cb8',
+      '#5474b4',
+      '#44639f',
+      '#39588f',
+      '#2d4b81',
+    ],
+
+    blue: [
+      '#eef3ff',
+      '#dee2f2',
+      '#bdc2de',
+      '#98a0ca',
+      '#7a84ba',
+      '#6672b0',
+      '#5c68ac',
+      '#4c5897',
+      '#424e88',
+      '#364379',
+    ],
+  },
+
+  shadows: {
+    md: '1px 1px 3px rgba(0, 0, 0, .25)',
+    xl: '5px 5px 3px rgba(0, 0, 0, .25)',
+  },
+
   headings: {
-    fontFamily: 'Helvetica, sans-serif',
+    fontFamily: 'Roboto, sans-serif',
     sizes: {
-      h1: { fontSize: '2.5rem' },
-      h2: { fontSize: '2rem' },
-      h3: { fontSize: '1.75rem' },
-      h4: { fontSize: '1.5rem' },
-      h5: { fontSize: '1.25rem' },
-      h6: { fontSize: '1rem' },
+      h1: { fontSize: rem(36) },
     },
   },
-  primaryColor: 'brand',
-};
-
-export const lightTheme = {
-  ...sharedTheme,
-  colorScheme: 'light',
-  colors: {
-    brand: [
-      '#f7f7f7',
-      '#e3e3e3',
-      '#d1d1d1',
-      '#b1b1b1',
-      '#8f8f8f',
-      '#6e6e6e',
-      '#4e4e4e',
-      '#3a3a3a',
-      '#222222',
-      '#111111',
-    ],
-    text: [
-      '#111111',
-      '#222222',
-      '#3a3a3a',
-      '#4e4e4e',
-      '#6e6e6e',
-      '#8f8f8f',
-      '#b1b1b1',
-      '#d1d1d1',
-      '#e3e3e3',
-      '#f7f7f7',
-    ],
-  },
-  other: {
-    borderColor: '#eaeaea',
-    hoverColor: '#f5f5f5',
-  },
-};
-
-export const darkTheme = {
-  ...sharedTheme,
-  colorScheme: 'dark',
-  colors: {
-    brand: [
-      '#111111',
-      '#222222',
-      '#3a3a3a',
-      '#4e4e4e',
-      '#6e6e6e',
-      '#8f8f8f',
-      '#b1b1b1',
-      '#d1d1d1',
-      '#e3e3e3',
-      '#f7f7f7',
-    ],
-    text: [
-      '#f7f7f7',
-      '#e3e3e3',
-      '#d1d1d1',
-      '#b1b1b1',
-      '#8f8f8f',
-      '#6e6e6e',
-      '#4e4e4e',
-      '#3a3a3a',
-      '#222222',
-      '#111111',
-    ],
-  },
-  other: {
-    borderColor: '#333333',
-    hoverColor: '#444444',
-  },
-};
+});
