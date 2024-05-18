@@ -1,21 +1,25 @@
 import { render as testingLibraryRender } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
-import { AppProvider } from '@/providers';
-import { createDynamicMockStore } from './__mocks__/dynamic-store.mock';
 import { createUserMock, useReposMock, useUserMock } from './__mocks__';
+import { CustomMantineProvider } from '@/providers/mantine-provider';
+import { ReactQueryProvider } from '@/providers/react-query-provider';
 
 export function render(ui: React.ReactNode) {
   /*
    * Any updates to the store should be replicated here.
    * */
   vi.mock('@/store', () => {
-    const useAuthStore = () =>
-      createDynamicMockStore({
-        token: 'test-token',
-        isModalOpen: false,
-        username: 'test-username',
-      });
+    const useAuthStore = vi.fn(() => ({
+      token: null,
+      isModalOpen: false,
+      username: null,
+      setToken: vi.fn(),
+      setUserName: vi.fn(),
+      openModal: vi.fn(),
+      closeModal: vi.fn(),
+    }));
+
     return { useAuthStore };
   });
 
@@ -44,18 +48,19 @@ export function render(ui: React.ReactNode) {
     };
   });
 
-  vi.mock('@/api/user', () => {
+  vi.mock('@/api', () => {
     const getUserFn = vi.fn(() => Promise.resolve(createUserMock()));
     const useUser = vi.fn(() => useUserMock());
-    return { getUserFn, useUser };
-  });
-
-  vi.mock('@/api/repo', () => {
+    // const getReposFn = vi.fn(() => Promise.resolve(Array.from({ length: 10 }, createRepoMock)));
     const useRepos = vi.fn(() => useReposMock());
-    return { useRepos };
+    return { getUserFn, useUser, useRepos };
   });
 
   return testingLibraryRender(<>{ui}</>, {
-    wrapper: ({ children }: { children: React.ReactNode }) => <AppProvider>{children}</AppProvider>,
+    wrapper: ({ children }: { children: React.ReactNode }) => (
+      <CustomMantineProvider>
+        <ReactQueryProvider>{children}</ReactQueryProvider>
+      </CustomMantineProvider>
+    ),
   });
 }
