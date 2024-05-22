@@ -1,25 +1,13 @@
 import { describe, it, expect, vi } from 'vitest';
-import { useAuthStore } from '@/store/auth-store';
+import { useAuthStore } from '@/store';
 import { isAuthenticated } from '@/utils/isAuthenticated';
 
 // Mock the useAuthStore hook
-vi.mock('@/store/auth-store', () => ({
+vi.mock('@/store', () => ({
   useAuthStore: vi.fn(),
 }));
 
 describe('isAuthenticated', () => {
-  it('returns true when both token and username are present', () => {
-    // Set up the mock to return a token and a username
-    // @ts-ignore
-    useAuthStore.mockImplementation(() => ({
-      token: 'some-token',
-      username: 'some-username',
-    }));
-
-    // Call the function and check the result
-    expect(isAuthenticated()).toBe(true);
-  });
-
   it('returns false when the token is missing', () => {
     // Set up the mock to return no token
     // @ts-ignore

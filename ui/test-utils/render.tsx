@@ -2,8 +2,7 @@ import { render as testingLibraryRender } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
 import { createUserMock, useReposMock, useUserMock } from './__mocks__';
-import { CustomMantineProvider } from '@/providers/mantine-provider';
-import { ReactQueryProvider } from '@/providers/react-query-provider';
+import { CustomMantineProvider, ReactQueryProvider } from '@/providers';
 
 export function render(ui: React.ReactNode) {
   /*
@@ -27,8 +26,14 @@ export function render(ui: React.ReactNode) {
    * As api-client is an abstraction of the underlying GitHub client, extending the app to other git managers
    * will be easy. And this wrapper doesn't have to be updated.
    *  */
-  vi.mock('@/api/api-client', () => {
-    const mockAxiosInstance = {
+
+  vi.mock('@/api', () => {
+    const getUserFn = vi.fn(() => Promise.resolve(createUserMock()));
+    const useUser = vi.fn(() => useUserMock());
+    // const getReposFn = vi.fn(() => Promise.resolve(Array.from({ length: 10 }, createRepoMock)));
+    const useRepos = vi.fn(() => useReposMock());
+
+    const apiClient = {
       get: vi.fn(() => Promise.resolve({ data: 'mocked get' })),
       post: vi.fn(() => Promise.resolve({ data: 'mocked post' })),
       put: vi.fn(() => Promise.resolve({ data: 'mocked put' })),
@@ -43,17 +48,8 @@ export function render(ui: React.ReactNode) {
       },
       defaults: { headers: { common: {} } },
     };
-    return {
-      apiClient: mockAxiosInstance,
-    };
-  });
 
-  vi.mock('@/api', () => {
-    const getUserFn = vi.fn(() => Promise.resolve(createUserMock()));
-    const useUser = vi.fn(() => useUserMock());
-    // const getReposFn = vi.fn(() => Promise.resolve(Array.from({ length: 10 }, createRepoMock)));
-    const useRepos = vi.fn(() => useReposMock());
-    return { getUserFn, useUser, useRepos };
+    return { getUserFn, useUser, useRepos, apiClient };
   });
 
   return testingLibraryRender(<>{ui}</>, {
