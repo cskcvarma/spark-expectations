@@ -1,8 +1,7 @@
 import { createBrowserRouter, createRoutesFromElements, Route } from 'react-router-dom';
 import { Protected } from '@/routes/protected';
 import { AppLayout } from '@/layouts';
-import { LoginPage } from '@/pages';
-import { isAuthenticated } from '@/utils';
+import { Login } from '@/pages';
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -11,7 +10,7 @@ export const router = createBrowserRouter(
         <Route index element={<AppLayout />} />
       </Route>
 
-      <Route path="login" element={<LoginPage />} loader={async () => isAuthenticated()} />
+      <Route path="login" element={<Login />} />
       <Route path="*" element={<h1>Not Found</h1>} />
     </Route>
   )
