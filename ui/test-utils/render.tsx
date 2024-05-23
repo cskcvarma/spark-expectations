@@ -11,12 +11,9 @@ export function render(ui: React.ReactNode) {
   vi.mock('@/store', () => {
     const useAuthStore = vi.fn(() => ({
       token: null,
-      isModalOpen: false,
       username: null,
       setToken: vi.fn(),
       setUserName: vi.fn(),
-      openModal: vi.fn(),
-      closeModal: vi.fn(),
     }));
 
     return { useAuthStore };
