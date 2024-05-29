@@ -41,13 +41,17 @@ describe('OAuthCallback', () => {
   });
 
   test('displays error message if error occurs', () => {
+    const mockNavigate = vi.fn();
     //@ts-ignore
     useOAuth.mockReturnValue({
       data: null,
       isLoading: false,
       isError: true,
+      error: { message: 'error' },
     });
+    //@ts-ignore
+    useNavigate.mockReturnValue(mockNavigate);
     render(<OAuthCallback />);
-    expect(screen.getByText('Error')).toBeInTheDocument();
+    expect(mockNavigate).toHaveBeenCalledWith('/login');
   });
 });

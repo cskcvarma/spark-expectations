@@ -52,7 +52,7 @@ export function render(ui: React.ReactNode) {
       defaults: { headers: { common: {} } },
     };
 
-    return { getUserFn, useUser, useRepos, apiClient, useOAuth };
+    return { getUserFn, useUser, useRepos, apiClient, useOAuth, githubLogin: vi.fn() };
   });
 
   vi.mock('react-router-dom', async (importOriginal) => {
@@ -64,6 +64,18 @@ export function render(ui: React.ReactNode) {
     };
   });
 
+  return testingLibraryRender(<>{ui}</>, {
+    wrapper: ({ children }: { children: React.ReactNode }) => (
+      <MemoryRouter>
+        <CustomMantineProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </CustomMantineProvider>
+      </MemoryRouter>
+    ),
+  });
+}
+
+export function renderWithOutMocks(ui: React.ReactNode) {
   return testingLibraryRender(<>{ui}</>, {
     wrapper: ({ children }: { children: React.ReactNode }) => (
       <MemoryRouter>
