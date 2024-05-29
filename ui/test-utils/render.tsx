@@ -55,6 +55,15 @@ export function render(ui: React.ReactNode) {
     return { getUserFn, useUser, useRepos, apiClient, useOAuth };
   });
 
+  vi.mock('react-router-dom', async (importOriginal) => {
+    const actual = await importOriginal(); // Import the actual module
+    return {
+      // @ts-ignore
+      ...actual, // Spread all original exports
+      useNavigate: vi.fn(), // Override specific exports you want to mock
+    };
+  });
+
   return testingLibraryRender(<>{ui}</>, {
     wrapper: ({ children }: { children: React.ReactNode }) => (
       <MemoryRouter>
