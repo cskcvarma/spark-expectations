@@ -1,6 +1,7 @@
 import { render as testingLibraryRender } from '@testing-library/react';
 import React from 'react';
 import { vi } from 'vitest';
+import { MemoryRouter } from 'react-router-dom';
 import { createUserMock, useReposMock, useUserMock } from './__mocks__';
 import { CustomMantineProvider, ReactQueryProvider } from '@/providers';
 
@@ -29,6 +30,11 @@ export function render(ui: React.ReactNode) {
     const useUser = vi.fn(() => useUserMock());
     // const getReposFn = vi.fn(() => Promise.resolve(Array.from({ length: 10 }, createRepoMock)));
     const useRepos = vi.fn(() => useReposMock());
+    const useOAuth = vi.fn(() => ({
+      data: { access_token: 'test' },
+      isLoading: false,
+      isError: false,
+    }));
 
     const apiClient = {
       get: vi.fn(() => Promise.resolve({ data: 'mocked get' })),
@@ -46,14 +52,16 @@ export function render(ui: React.ReactNode) {
       defaults: { headers: { common: {} } },
     };
 
-    return { getUserFn, useUser, useRepos, apiClient };
+    return { getUserFn, useUser, useRepos, apiClient, useOAuth };
   });
 
   return testingLibraryRender(<>{ui}</>, {
     wrapper: ({ children }: { children: React.ReactNode }) => (
-      <CustomMantineProvider>
-        <ReactQueryProvider>{children}</ReactQueryProvider>
-      </CustomMantineProvider>
+      <MemoryRouter>
+        <CustomMantineProvider>
+          <ReactQueryProvider>{children}</ReactQueryProvider>
+        </CustomMantineProvider>
+      </MemoryRouter>
     ),
   });
 }
