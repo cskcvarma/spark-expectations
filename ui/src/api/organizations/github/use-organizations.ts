@@ -1,14 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
 import { apiClient } from '@/api';
 import { useAuthStore } from '@/store';
-import { organizationQueryKeys } from '@/api/organizations/query-keys';
+import { organizationQueryKeys } from '../query-keys';
 
 export const getOrganizationsFn = async () => {
-  const response = await apiClient.get('/user/repos', {
-    headers: {
-      Authorization: `Bearer ${useAuthStore.getState().token}`,
-    },
-  });
+  const response = await apiClient.get(
+    `/repos/${useAuthStore.getState().username}/spark-expectations/contents/ui/test-utils/rules.yaml`,
+    {
+      headers: {
+        Authorization: `Bearer ${useAuthStore.getState().token}`,
+      },
+    }
+  );
 
   return response.data;
 };
