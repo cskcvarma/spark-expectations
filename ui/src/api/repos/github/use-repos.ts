@@ -15,7 +15,6 @@ export const getReposFn = async () => {
 
 export const useRepos = () =>
   useQuery({
-    queryKey: repoQueryKeys.details(),
+    queryKey: repoQueryKeys.all,
     queryFn: getReposFn,
-    retry: 4,
   });

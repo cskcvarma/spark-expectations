@@ -3,6 +3,7 @@ import React from 'react';
 import { AppShell, Container, Grid, Skeleton, Stack } from '@mantine/core';
 import { Header } from '@/components';
 import { ReposList } from '../ReposList';
+import { FilesList } from '../FilesList';
 
 const child = <Skeleton height="900" radius="md" animate={false} />;
 
@@ -15,7 +16,10 @@ export const Navigator = () => (
       <Container fluid mt={50}>
         <Grid>
           <Grid.Col span={2}>
-            <ReposList />
+            <Stack>
+              <ReposList />
+              <FilesList />
+            </Stack>
           </Grid.Col>
           <Grid.Col span={8}>{child}</Grid.Col>
           <Grid.Col span={2}>{child}</Grid.Col>
