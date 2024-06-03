@@ -2,12 +2,12 @@ import React from 'react';
 
 import { AppShell, Button, Container, Grid, Skeleton, Stack } from '@mantine/core';
 import { Header } from '@/components';
-import { useOrganizations } from '@/api/organizations';
+import { useRepos } from '@/api';
 
 const child = <Skeleton height="900" radius="md" animate={false} />;
 
 export const Navigator = () => {
-  const { data } = useOrganizations();
+  const { data } = useRepos();
   console.log(data);
   return (
     <AppShell>
