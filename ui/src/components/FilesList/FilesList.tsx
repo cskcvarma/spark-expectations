@@ -4,7 +4,10 @@ import { useRepo } from '@/api';
 import { Loading } from '@/components';
 
 export const FilesList = () => {
-  const { selectedRepo } = useRepoStore();
+  const { selectedRepo, selectFile } = useRepoStore((state) => ({
+    selectedRepo: state.selectedRepo,
+    selectFile: state.selectFile,
+  }));
 
   const { data, isLoading, isError } = useRepo(
     selectedRepo?.owner?.login,
@@ -28,8 +31,8 @@ export const FilesList = () => {
       </Title>
       <ScrollArea style={{ height: 300 }}>
         <List spacing="sm" size="sm" center>
-          {data.map((file: any, index: number) => (
-            <List.Item key={index}>
+          {data?.map((file: any, index: number) => (
+            <List.Item key={index} onClick={() => selectFile(file)}>
               <Tooltip label={file.path} position="bottom" withArrow>
                 <Text style={{ cursor: 'pointer' }}>{file.name}</Text>
               </Tooltip>

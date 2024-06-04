@@ -62,7 +62,7 @@ export const useRepo = (
   useQuery({
     queryKey: repoQueryKeys.detail([owner, repoName, path]),
     queryFn: () => getAllYamlFilesFn(owner, repoName, path),
-    enabled: isEnabled,
+    enabled: isEnabled && !!owner && !!repoName,
   });
 
 // function filterYAMLFiles(data: any) {
