@@ -1,10 +1,11 @@
 import React, { useState, useMemo } from 'react';
 import { useTable, useBlockLayout, useResizeColumns } from 'react-table';
-import { Badge, ScrollArea, Tooltip, Text } from '@mantine/core';
+import { ScrollArea, Tooltip, Text, Button } from '@mantine/core';
 import styled from 'styled-components';
 import { useRepoFile } from '@/api';
 import { useRepoStore } from '@/store';
 import { Loading } from '@/components';
+import { RulesModal } from '../RulesModal'; // Adjust the import path as needed
 
 const Styles = styled.div`
   .table {
@@ -40,20 +41,6 @@ const Styles = styled.div`
       :last-child {
         border-right: 0;
       }
-
-      .resizer {
-        display: inline-block;
-        background: #000;
-        width: 5px;
-        height: 100%;
-        position: absolute;
-        right: 0;
-        top: 0;
-        transform: translateX(50%);
-        z-index: 1;
-        touch-action: none;
-        cursor: col-resize;
-      }
     }
 
     .th {
@@ -81,21 +68,24 @@ const Styles = styled.div`
       min-width: 150px;
       font-weight: bold;
     }
+
+    .th.edit,
+    .td.edit {
+      position: sticky;
+      right: 0;
+      background-color: inherit; /* Ensure the background matches the row */
+      z-index: 1; /* Make sure it's above other content */
+    }
   }
 `;
 
 const transformKey = (key: string) =>
   key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 
-const renderCellContent = (key: string, value: any) => {
-  if (key === 'enabled') {
-    return value ? <Badge color="green">Enabled</Badge> : <Badge color="red">Disabled</Badge>;
-  }
-  return value;
-};
-
 export const RulesTable: React.FC = () => {
   const [expandedRowIndex, setExpandedRowIndex] = useState<number | null>(null);
+  const [editRowData, setEditRowData] = useState(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const { selectedRepo, selectedFile } = useRepoStore((state) => ({
     selectedRepo: state.selectedRepo,
@@ -108,17 +98,31 @@ export const RulesTable: React.FC = () => {
     selectedFile?.path
   );
 
-  const columns = useMemo(
-    () =>
-      data?.rules_data
-        ? Object.keys(data.rules_data[0]).map((key) => ({
-            Header: transformKey(key),
-            accessor: key,
-            minWidth: 150, // Set a minimum width for each column
-          }))
-        : [],
-    [data]
-  );
+  const columns = useMemo(() => {
+    const baseColumns = data?.rules_data
+      ? Object.keys(data.rules_data[0]).map((key) => ({
+          Header: transformKey(key),
+          accessor: key,
+          minWidth: 150, // Set a minimum width for each column
+          getHeaderProps: () => ({ className: key }), // Add getHeaderProps for each column
+        }))
+      : [];
+
+    if (baseColumns.length === 0) {
+      return [];
+    }
+
+    // Add edit column
+    baseColumns.push({
+      Header: 'Edit',
+      accessor: 'edit', // This accessor can be anything that doesn't conflict with your data keys
+      minWidth: 100,
+      Cell: ({ row }) => <Button onClick={() => handleEdit(row.original)}>Edit</Button>,
+      getHeaderProps: () => ({ className: 'edit' }), // Add getHeaderProps for the edit column
+    });
+
+    return baseColumns;
+  }, [data]);
 
   const tableData = useMemo(() => (data ? data.rules_data : []), [data]);
 
@@ -143,6 +147,16 @@ export const RulesTable: React.FC = () => {
     setExpandedRowIndex(expandedRowIndex === index ? null : index);
   };
 
+  const handleEdit = (row) => {
+    setEditRowData(row);
+    setIsModalOpen(true);
+  };
+
+  const handleSave = (updatedRowData) => {
+    console.log('Updated row data:', updatedRowData);
+    // Handle saving the updated data, e.g., send to an API or update state
+  };
+
   return (
     <ScrollArea>
       <Styles>
@@ -150,12 +164,14 @@ export const RulesTable: React.FC = () => {
           <div>
             {headerGroups.map((headerGroup) => (
               <div {...headerGroup.getHeaderGroupProps()} className="tr">
-                {headerGroup.headers.map((column) => (
-                  <div {...column.getHeaderProps()} className="th">
-                    {column.render('Header')}
-                    <div {...column.getResizerProps()} className="resizer" />
-                  </div>
-                ))}
+                {headerGroup.headers.map((column) => {
+                  const headerProps = column.getHeaderProps();
+                  return (
+                    <div {...headerProps} className={`th ${headerProps.className}`}>
+                      {column.render('Header')}
+                    </div>
+                  );
+                })}
               </div>
             ))}
           </div>
@@ -169,8 +185,12 @@ export const RulesTable: React.FC = () => {
                   <div {...row.getRowProps()} className="tr" onClick={() => handleRowClick(index)}>
                     {row.cells.map((cell) => (
                       <Tooltip key={cell.column.id} label={String(cell.value)} withArrow>
-                        <div {...cell.getCellProps()} className="td">
-                          {renderCellContent(cell.column.id, cell.value)}
+                        <div
+                          {...cell.getCellProps({
+                            className: cell.column.id === 'edit' ? 'td edit' : 'td',
+                          })}
+                        >
+                          {cell.render('Cell')}
                         </div>
                       </Tooltip>
                     ))}
@@ -182,6 +202,9 @@ export const RulesTable: React.FC = () => {
                           <strong>{transformKey(key)}:</strong> {String(value)}
                         </div>
                       ))}
+                      <Button w="100px" onClick={() => handleEdit(row.original)}>
+                        Edit
+                      </Button>
                     </div>
                   )}
                 </div>
@@ -190,6 +213,14 @@ export const RulesTable: React.FC = () => {
           </div>
         </div>
       </Styles>
+      {isModalOpen && (
+        <RulesModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+          rowData={editRowData}
+          onSave={handleSave}
+        />
+      )}
     </ScrollArea>
   );
 };
