@@ -8,6 +8,7 @@ export const RulesModal = ({ isOpen, onClose, rowData, onSave }) => {
   });
 
   const handleSubmit = (values) => {
+    console.log(values);
     onSave(values);
     onClose();
   };
@@ -17,18 +18,6 @@ export const RulesModal = ({ isOpen, onClose, rowData, onSave }) => {
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
           {Object.entries(rowData).map(([key, value]) => (
-            // if (typeof value === 'boolean') {
-            //   return (
-            //     <RadioGroup
-            //       key={key}
-            //       label={key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}
-            //       {...form.getInputProps(key)}
-            //     >
-            //       <Radio value="true">Enabled</Radio>
-            //       <Radio value="false">Disabled</Radio>
-            //     </RadioGroup>
-            //   );
-            // }
             <Textarea
               key={key}
               label={key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}

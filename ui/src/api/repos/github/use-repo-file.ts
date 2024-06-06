@@ -9,6 +9,9 @@ export const readYamlFile = async (owner: any, repoName: any, path: any) => {
     headers: {
       Authorization: `Bearer ${useAuthStore.getState().token}`,
     },
+    // params: {
+    //   ref: 'rule_changer',
+    // },
   });
   const { content, encoding } = response.data;
 

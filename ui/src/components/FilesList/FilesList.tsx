@@ -1,12 +1,15 @@
 import { List, Paper, ScrollArea, Text, Title, Tooltip } from '@mantine/core';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRepoStore } from '@/store';
 import { useRepo } from '@/api';
 import { Loading } from '@/components';
+import { getBranchFn } from '@/api/branches/github/use-branch';
 
 export const FilesList = () => {
-  const { selectedRepo, selectFile } = useRepoStore((state) => ({
+  const { selectedRepo, selectFile, selectBranch } = useRepoStore((state) => ({
     selectedRepo: state.selectedRepo,
     selectFile: state.selectFile,
+    selectBranch: state.selectBranch,
   }));
 
   const { data, isLoading, isError } = useRepo(
@@ -15,6 +18,17 @@ export const FilesList = () => {
     '',
     true
   );
+
+  const handleCreateBranch = (file: any) => {
+    getBranchFn()
+      .then((branch: any) => {
+        selectFile(file);
+        selectBranch(branch);
+      })
+      .catch((err: any) => {
+        console.log(err);
+      });
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -32,7 +46,7 @@ export const FilesList = () => {
       <ScrollArea style={{ height: 300 }}>
         <List spacing="sm" size="sm" center>
           {data?.map((file: any, index: number) => (
-            <List.Item key={index} onClick={() => selectFile(file)}>
+            <List.Item key={index} onClick={() => handleCreateBranch(file)}>
               <Tooltip label={file.path} position="bottom" withArrow>
                 <Text style={{ cursor: 'pointer' }}>{file.name}</Text>
               </Tooltip>

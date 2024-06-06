@@ -2,10 +2,13 @@ import React, { useState, useMemo } from 'react';
 import { useTable, useBlockLayout, useResizeColumns } from 'react-table';
 import { ScrollArea, Tooltip, Text, Button } from '@mantine/core';
 import styled from 'styled-components';
+import { useMutation, useQueryClient } from '@tanstack/react-query'; // Adjust the import path as needed
+import yaml from 'js-yaml';
 import { useRepoFile } from '@/api';
 import { useRepoStore } from '@/store';
 import { Loading } from '@/components';
-import { RulesModal } from '../RulesModal'; // Adjust the import path as needed
+import { RulesModal } from '../RulesModal';
+import { commitChangesFn } from '@/api/commits/github/commit-flie-mutation';
 
 const Styles = styled.div`
   .table {
@@ -79,6 +82,19 @@ const Styles = styled.div`
   }
 `;
 
+// Custom YAML type to always use double quotes for strings
+const customStringType = new yaml.Type('!str', {
+  kind: 'scalar',
+  resolve: (data) => typeof data === 'string',
+  construct: (data) => data,
+  instanceOf: String,
+  represent: {
+    default: (str) => `"${str}"`,
+  },
+});
+
+// Custom schema that includes the custom string type
+const customYamlSchema = yaml.DEFAULT_SCHEMA.extend([customStringType]);
 const transformKey = (key: string) =>
   key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase());
 
@@ -97,6 +113,10 @@ export const RulesTable: React.FC = () => {
     selectedRepo?.name,
     selectedFile?.path
   );
+  const queryClient = useQueryClient();
+  const commitMutation = useMutation({
+    mutationFn: commitChangesFn,
+  });
 
   const columns = useMemo(() => {
     const baseColumns = data?.rules_data
@@ -112,14 +132,14 @@ export const RulesTable: React.FC = () => {
       return [];
     }
 
-    // Add edit column
-    baseColumns.push({
-      Header: 'Edit',
-      accessor: 'edit', // This accessor can be anything that doesn't conflict with your data keys
-      minWidth: 100,
-      Cell: ({ row }) => <Button onClick={() => handleEdit(row.original)}>Edit</Button>,
-      getHeaderProps: () => ({ className: 'edit' }), // Add getHeaderProps for the edit column
-    });
+    // // Add edit column
+    // baseColumns.push({
+    //   Header: 'Edit',
+    //   accessor: 'edit', // This accessor can be anything that doesn't conflict with your data keys
+    //   minWidth: 100,
+    //   Cell: ({ row }) => <Button onClick={() => handleEdit(row.original)}>Edit</Button>,
+    //   getHeaderProps: () => ({ className: 'edit' }), // Add getHeaderProps for the edit column
+    // });
 
     return baseColumns;
   }, [data]);
@@ -147,14 +167,23 @@ export const RulesTable: React.FC = () => {
     setExpandedRowIndex(expandedRowIndex === index ? null : index);
   };
 
-  const handleEdit = (row) => {
-    setEditRowData(row);
+  const handleEdit = (row, rowIndex) => {
+    setEditRowData({ ...row, index: rowIndex });
     setIsModalOpen(true);
   };
 
   const handleSave = (updatedRowData) => {
-    console.log('Updated row data:', updatedRowData);
-    // Handle saving the updated data, e.g., send to an API or update state
+    try {
+      const updatedTableData = tableData.map((row, index) =>
+        index === updatedRowData.index ? updatedRowData : row
+      );
+      console.log(updatedTableData);
+      const yamlData = yaml.dump({ rules_data: updatedTableData }, { schema: customYamlSchema });
+      console.log(yamlData);
+      commitMutation.mutateAsync({ content: yamlData });
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -202,7 +231,7 @@ export const RulesTable: React.FC = () => {
                           <strong>{transformKey(key)}:</strong> {String(value)}
                         </div>
                       ))}
-                      <Button w="100px" onClick={() => handleEdit(row.original)}>
+                      <Button w="100px" onClick={() => handleEdit(row.original, index)}>
                         Edit
                       </Button>
                     </div>
