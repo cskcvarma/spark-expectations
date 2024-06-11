@@ -1,4 +1,5 @@
 import { List, Paper, ScrollArea, Text, Tooltip } from '@mantine/core';
+import { notifications } from '@mantine/notifications';
 import { useRepoStore } from '@/store';
 import { useRepo } from '@/api';
 import { Loading } from '@/components';
@@ -28,8 +29,12 @@ const FilesList = ({ selectedRepo }: FilesListProps) => {
         selectFile(file);
         selectBranch(branch);
       })
-      .catch((err: any) => {
-        console.log(err);
+      .catch(() => {
+        notifications.show({
+          message: 'Error creating branch',
+          color: 'red',
+          title: 'Error',
+        });
       });
   };
 

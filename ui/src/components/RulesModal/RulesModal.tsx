@@ -1,14 +1,19 @@
-import React, { useState } from 'react';
-import { Modal, Button, Textarea, RadioGroup, Radio, Group, Stack } from '@mantine/core';
+import { Modal, Button, Textarea, Group, Stack } from '@mantine/core';
 import { useForm } from '@mantine/form';
 
-export const RulesModal = ({ isOpen, onClose, rowData, onSave }) => {
+interface RulesModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  rowData: any;
+  onSave: (values: any) => void;
+}
+
+export const RulesModal = ({ isOpen, onClose, rowData, onSave }: RulesModalProps) => {
   const form = useForm({
     initialValues: rowData || {},
   });
 
-  const handleSubmit = (values) => {
-    console.log(values);
+  const handleSubmit = (values: any) => {
     onSave(values);
     onClose();
   };
@@ -17,14 +22,14 @@ export const RulesModal = ({ isOpen, onClose, rowData, onSave }) => {
     <Modal opened={isOpen} onClose={onClose} title="Edit Row Data">
       <form onSubmit={form.onSubmit(handleSubmit)}>
         <Stack>
-          {Object.entries(rowData).map(([key, value]) => (
+          {Object.entries(rowData).map(([key]) => (
             <Textarea
               key={key}
               label={key.replace(/_/g, ' ').replace(/\b\w/g, (char) => char.toUpperCase())}
               {...form.getInputProps(key)}
             />
           ))}
-          <Group position="right">
+          <Group p="right">
             <Button type="submit">Save</Button>
           </Group>
         </Stack>

@@ -4,16 +4,16 @@ import { useRepoStore } from '@/store';
 
 const fetchCommitsFn = async (): Promise<any[]> => {
   const { selectedRepo } = useRepoStore.getState();
-  const branch: Branch = useRepoStore.getState().selectedBranch;
+  const branch: Branch | null = useRepoStore.getState().selectedBranch;
   const response = await apiClient.get(
-    `/repos/${selectedRepo?.owner.login}/${selectedRepo?.name}/commits?sha=${branch.commit.sha}`
+    `/repos/${selectedRepo?.owner.login}/${selectedRepo?.name}/commits?sha=${branch?.commit.sha}`
   );
-  return response.data;
+  return response.data as Commit[];
 };
 
-export const useCommits = (isEnabled = true) =>
+export const useCommits = (branchName: undefined | string, isEnabled = true) =>
   useQuery({
     queryFn: fetchCommitsFn,
-    queryKey: ['Github', 'commits'],
+    queryKey: ['Github', 'commits', branchName],
     enabled: isEnabled,
   });

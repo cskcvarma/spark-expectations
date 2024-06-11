@@ -1,9 +1,10 @@
 import React, { useState, useMemo } from 'react';
 import { useTable, useBlockLayout, useResizeColumns } from 'react-table';
-import { ScrollArea, Tooltip, Text, Button } from '@mantine/core';
+import { ScrollArea, Tooltip, Text, Button, Group } from '@mantine/core';
 import styled from 'styled-components';
-import { useMutation, useQueryClient } from '@tanstack/react-query'; // Adjust the import path as needed
+import { useMutation } from '@tanstack/react-query';
 import yaml from 'js-yaml';
+import { notifications } from '@mantine/notifications';
 import { useRepoFile } from '@/api';
 import { useRepoStore } from '@/store';
 import { Loading } from '@/components';
@@ -113,7 +114,7 @@ export const RulesTable: React.FC = () => {
     selectedRepo?.name,
     selectedFile?.path
   );
-  const queryClient = useQueryClient();
+
   const commitMutation = useMutation({
     mutationFn: commitChangesFn,
   });
@@ -167,22 +168,25 @@ export const RulesTable: React.FC = () => {
     setExpandedRowIndex(expandedRowIndex === index ? null : index);
   };
 
-  const handleEdit = (row, rowIndex) => {
+  const handleEdit = (row: object | null, rowIndex: number) => {
+    // @ts-ignore
     setEditRowData({ ...row, index: rowIndex });
     setIsModalOpen(true);
   };
 
-  const handleSave = (updatedRowData) => {
+  const handleSave = (updatedRowData: { index: any }) => {
     try {
-      const updatedTableData = tableData.map((row, index) =>
+      const updatedTableData = tableData.map((row: any, index: any) =>
         index === updatedRowData.index ? updatedRowData : row
       );
-      console.log(updatedTableData);
       const yamlData = yaml.dump({ rules_data: updatedTableData }, { schema: customYamlSchema });
-      console.log(yamlData);
       commitMutation.mutateAsync({ content: yamlData });
     } catch (err) {
-      console.log(err);
+      notifications.show({
+        title: 'Error',
+        message: 'Error saving changes',
+        color: 'danger',
+      });
     }
   };
 
@@ -211,7 +215,12 @@ export const RulesTable: React.FC = () => {
               const isExpanded = expandedRowIndex === index;
               return (
                 <div key={row.id}>
-                  <div {...row.getRowProps()} className="tr" onClick={() => handleRowClick(index)}>
+                  <Group
+                    {...row.getRowProps()}
+                    className="tr"
+                    onClick={() => handleRowClick(index)}
+                    unstyled
+                  >
                     {row.cells.map((cell) => (
                       <Tooltip key={cell.column.id} label={String(cell.value)} withArrow>
                         <div
@@ -223,7 +232,7 @@ export const RulesTable: React.FC = () => {
                         </div>
                       </Tooltip>
                     ))}
-                  </div>
+                  </Group>
                   {isExpanded && (
                     <div className="expandedRowContent">
                       {Object.entries(row.original).map(([key, value]) => (
