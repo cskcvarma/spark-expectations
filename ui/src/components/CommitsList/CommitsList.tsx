@@ -17,6 +17,10 @@ export const CommitsList = () => {
 
   const commits: Commit[] = data || [];
 
+  if (commits.length === 0) {
+    return <></>;
+  }
+
   return (
     <Card shadow="sm" padding="lg">
       <Title order={2}>Commits in {selectedBranch?.name}</Title>

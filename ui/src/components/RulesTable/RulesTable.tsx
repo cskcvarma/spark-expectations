@@ -190,6 +190,10 @@ export const RulesTable: React.FC = () => {
     }
   };
 
+  if (rows && rows.length === 0) {
+    return null;
+  }
+
   return (
     <ScrollArea>
       <Styles>
